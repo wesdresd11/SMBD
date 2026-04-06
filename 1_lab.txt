@@ -20,7 +20,7 @@ CREATE TABLE STUDENTS (
     CONSTRAINT FK_Students_Groups FOREIGN KEY (group_id) REFERENCES GROUPS(group_id)
 );
 
-CREATE TABLE ED_PLAN (
+CREATE TABLE [PLAN] (
     group_id INT,
     subject_id INT,
     PRIMARY KEY (group_id, subject_id),
@@ -49,14 +49,14 @@ INSERT INTO STUDENTS (last_name, first_name, middle_name, birth_date, group_id) 
 ('Ковриго', 'Т.Р.', NULL, '1992-05-13', 335),
 ('Шарапо', 'Н.', NULL, '1992-08-14', 335);
 
-INSERT INTO ED_PLAN (group_id, subject_id) VALUES 
+INSERT INTO [PLAN] (group_id, subject_id) VALUES 
 (135, 1), (135, 2),
 (235, 3), (235, 4),
 (335, 5), (335, 6);
 
 INSERT INTO GROUPS (group_id, name, course) VALUES (134, 'ПО134', 1);
 
-UPDATE ED_PLAN SET group_id = 134 WHERE group_id = 135;
+UPDATE [PLAN] SET group_id = 134 WHERE group_id = 135;
 UPDATE STUDENTS SET group_id = 134 WHERE group_id = 135;
 
 DELETE FROM GROUPS WHERE name = 'ПО135';
