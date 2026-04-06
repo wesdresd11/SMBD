@@ -1,0 +1,85 @@
+CREATE TABLE GROUPS (
+    group_id INT PRIMARY KEY,
+    name VARCHAR(20),
+    course INT
+);
+
+CREATE TABLE SUBJECTS (
+    subject_id INT PRIMARY KEY,
+    subject_name VARCHAR(100),
+    hours INT
+);
+
+CREATE TABLE STUDENTS (
+    student_id INT PRIMARY KEY IDENTITY(1,1),
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    middle_name VARCHAR(20),
+    birth_date DATE,
+    group_id INT,
+    CONSTRAINT FK_Students_Groups FOREIGN KEY (group_id) REFERENCES GROUPS(group_id)
+);
+
+CREATE TABLE ED_PLAN (
+    group_id INT,
+    subject_id INT,
+    PRIMARY KEY (group_id, subject_id),
+    CONSTRAINT FK_EDPlan_Subjects FOREIGN KEY (subject_id) REFERENCES SUBJECTS(subject_id),
+    CONSTRAINT FK_EDPlan_Groups FOREIGN KEY (group_id) REFERENCES GROUPS(group_id)
+);
+
+INSERT INTO GROUPS (group_id, name, course) VALUES 
+(135, 'ПО135', 1),
+(235, 'ПО235', 2),
+(335, 'ПО335', 3);
+
+INSERT INTO SUBJECTS (subject_id, subject_name, hours) VALUES 
+(1, 'Физика', 200),
+(2, 'Математика', 120),
+(3, 'Основы алгоритмизации', 70),
+(4, 'Проектирование БД', 130),
+(5, 'Средства визуального программирования', 90),
+(6, 'Объектно-ориентированное программирование', 70);
+
+INSERT INTO STUDENTS (last_name, first_name, middle_name, birth_date, group_id) VALUES 
+('Федоренко', 'П.Р.', NULL, '1997-12-25', 135),
+('Зингел', 'О.', NULL, '1985-12-25', 135),
+('Савицкаян', 'Н.', NULL, '1987-09-22', 235),
+('Ковальчук', 'М.Е.', NULL, '1992-06-17', 235),
+('Ковриго', 'Т.Р.', NULL, '1992-05-13', 335),
+('Шарапо', 'Н.', NULL, '1992-08-14', 335);
+
+INSERT INTO ED_PLAN (group_id, subject_id) VALUES 
+(135, 1), (135, 2),
+(235, 3), (235, 4),
+(335, 5), (335, 6);
+
+INSERT INTO GROUPS (group_id, name, course) VALUES (134, 'ПО134', 1);
+
+UPDATE ED_PLAN SET group_id = 134 WHERE group_id = 135;
+UPDATE STUDENTS SET group_id = 134 WHERE group_id = 135;
+
+DELETE FROM GROUPS WHERE name = 'ПО135';
+
+UPDATE SUBJECTS 
+SET hours = hours + 30 
+WHERE subject_name IN ('Средства визуального программирования', 'Объектно-ориентированное программирование');
+
+ALTER TABLE SUBJECTS ADD control_type NVARCHAR(20);
+
+UPDATE SUBJECTS SET control_type = 'Экзамен';
+UPDATE SUBJECTS SET control_type = 'Зачет' WHERE subject_name = 'Основы алгоритмизации';
+
+ALTER TABLE STUDENTS DROP COLUMN middle_name;
+
+SELECT 
+    s.last_name AS [Фамилия],
+    s.first_name AS [Имя],
+    g.name AS [Группа],
+    sub.subject_name AS [Предмет],
+    sub.hours AS [Часы],
+    sub.control_type AS [Контроль]
+FROM STUDENTS s
+JOIN GROUPS g ON s.group_id = g.group_id
+JOIN ED_PLAN ep ON g.group_id = ep.group_id
+JOIN SUBJECTS sub ON ep.subject_id = sub.subject_id;
